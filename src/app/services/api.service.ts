@@ -16,7 +16,7 @@ export class ApiService {
     return this.http.post<any[]>(APIS.uploadPayments, post, {
       responseType: "json"
     });
-  },
+  }
 
   reportSeasons(): Observable<any> {
     /*
@@ -26,5 +26,4 @@ export class ApiService {
       responseType: "json"
     });
   }
-
 }
