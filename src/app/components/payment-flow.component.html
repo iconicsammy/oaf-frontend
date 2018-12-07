@@ -1,0 +1,7 @@
+<tr *ngFor="let flow of optimizedData">
+  <td>{{ flow.SeasonID }}</td>
+  <td>{{ flow.positive }}</td>
+  <td>{{ flow.negative }}</td>
+  <td>{{ flow.positive + flow.negative}}</td>
+  <td>{{isExtra(flow.extra)}}</td>
+</tr>

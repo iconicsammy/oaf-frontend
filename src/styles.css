@@ -1,1 +1,57 @@
-/* You can add global styles to this file, and also import other style files */
+/* Generated via www.cssmenubuilder.com */
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
+.menu {
+  margin: 0 auto;
+  padding: 0;
+  height: 30px;
+  width: 100%;
+  display: block;
+  background-color: cyan;
+}
+.menu li {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: inline;
+}
+.menu li a {
+  float: left;
+  padding-left: 15px;
+  display: block;
+  color: rgb(0, 0, 0);
+  text-decoration: none;
+  font: 12px Verdana, Arial, Helvetica, sans-serif;
+  cursor: pointer;
+}
+.menu li a span {
+  line-height: 30px;
+  float: left;
+  display: block;
+  padding-right: 15px;
+}
+.menu li a:hover {
+  background-position: 0px -60px;
+  color: rgb(0, 0, 0);
+}
+.menu li a:hover span {
+  background-position: 100% -60px;
+}
+.menu li a.active,
+.menu li a.active:hover {
+  line-height: 30px;
+  font: 12px Verdana, Arial, Helvetica, sans-serif;
+  color: rgb(0, 0, 0);
+}
+
+
+.block {
+    margin: 3px 10px;
+  }
+  
+  .hide {
+    display: none;
+  }
+  .show {
+    display: block;
+  }

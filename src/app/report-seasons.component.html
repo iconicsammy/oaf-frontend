@@ -1,0 +1,35 @@
+<app-nav-menu></app-nav-menu>
+
+<h5>Seasonal Reporting</h5>
+<div class="row block">
+  <div class="col-md-6">
+    <button class="btn-secondary" (click)="generateReport()">
+      Generate Payment Status Report
+    </button>
+  </div>
+</div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <td>#</td>
+      <td>Season ID</td>
+      <td>Season Name</td>
+      <td>Number of Farmers</td>
+      <td>Loan Amount Total</td>
+      <td>Paid Already Amount</td>
+      <td>Total Remaining</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let report of processedData; let x = index">
+      <td>{{ x + 1 }}</td>
+      <td>{{ report.SeasonID }}</td>
+      <td>{{ report.SeasonName }}</td>
+      <td>{{ report.totalCustomers }}</td>
+      <td>{{ report.totalCredit }}</td>
+      <td>{{ report.totalRepaid }}</td>
+      <td>{{ rePaymentStatus(report.totalCredit, report.totalRepaid) }}</td>
+    </tr>
+  </tbody>
+</table>

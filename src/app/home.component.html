@@ -1,0 +1,208 @@
+<!-- The content below is only a placeholder and can be replaced. -->
+
+<app-nav-menu></app-nav-menu>
+<h5>Upload JSON data for Processing</h5>
+
+<div class="row block">
+  <div class="col-md-12">
+    <form
+      [formGroup]="postform"
+      (ngSubmit)="handleFormSubmission(postform.value)"
+    >
+      <div class="row">
+        <div class="col-md-12">
+          <textarea formControlName="content" class="form-control"></textarea>
+        </div>
+
+        <div class="col-md-12">
+          <button
+            type="submit"
+            class="btn-primary"
+            [disabled]="!postform.valid"
+          >
+            Process Payment
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row block" *ngIf="processDone">
+  <div class="col-md-6">
+    <select class="form-control" #filter_option>
+      <option value="all">All</option>
+      <option value="seasonal">Only Seasonal</option>
+      <option value="seasonless">Only Seasonless</option>
+      <option value="passed">Passed</option>
+      <option value="failed">Failed</option>
+    </select>
+  </div>
+  <div class="col-md-3">
+    <button class="btn-secondary" (click)="filterResults(filter_option.value)">
+      Filter Results
+    </button>
+  </div>
+</div>
+
+<div class="row block" *ngIf="processDone">
+  <div class="col-md-12">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Customer ID</th>
+
+          <th>Amount Paid</th>
+          <th>Season ID</th>
+          <th>Date</th>
+          <th>Succeeded?</th>
+          <th>Is Seasonal?</th>
+          <th>&nbsp;</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <ng-container *ngFor="let result of processedData; let x = index">
+          <tr>
+            <td>{{ x + 1 }}</td>
+            <td>{{ result.CustomerID }}</td>
+            <td>{{ result.Amount }}</td>
+            <td>{{ result.SeasonID }}</td>
+            <td>{{ result.Date }}</td>
+            <td>{{ paymentSucceed(result.status) }}</td>
+            <td>{{ isSeasonal(result.distributed) }}</td>
+            <td>
+              <a href="#" (click)="showPaymentDetails($event, x)">Details</a>
+            </td>
+          </tr>
+
+          <tr *ngIf="activeChildId == x">
+            <td>
+              <a href="#" (click)="showPaymentDetails($event, -1)">Close</a>
+            </td>
+            <td colspan="6" *ngIf="result.status == 0">{{ result.err }}</td>
+
+            <td colspan="6" *ngIf="result.status == 1">
+              <button
+                class="btn-secondary"
+                (click)="displayPaymentDetail('PaymentFlow')"
+              >
+                View Payment Flow
+              </button>
+              <button
+                class="btn-secondary"
+                *ngIf="!result.distributed"
+                (click)="displayPaymentDetail('SeasonalPaymentEffect')"
+              >
+                View Seasonal Payment Effect
+              </button>
+              <button
+                class="btn-secondary"
+                *ngIf="result.distributed"
+                (click)="displayPaymentDetail('SeasonlessPaymentEffect')"
+              >
+                View Seasonless Payment Effect
+              </button>
+
+              <table class="table" *ngIf="showDetail == 'PaymentFlow'">
+                <thead>
+                  <tr>
+                    <th>Season ID</th>
+                    <th>Postive Advance</th>
+                    <th>Negative Advance</th>
+                    <th>Amount Added</th>
+                    <th>Extra?</th>
+                  </tr>
+                </thead>
+                <tbody app-payment-flow [data]="result.paymentDistribution">
+                  <!--
+                    <ng-container *ngIf="result.paymentDistribution.length==1">
+                        <tr>
+                            <td>{{ result.paymentDistribution[0].SeasonID }}</td>
+                            <td>{{ result.paymentDistribution[0].amount }}</td>
+                            <td>0</td>
+                            <td>{{ result.paymentDistribution[0].amount }}</td>
+                            <td>{{ isExtra(result.paymentDistribution[0].extra) }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>{{ result.paymentDistribution[0].SeasonID }}</td>
+                            <td>{{ result.paymentDistribution[0].amount }}</td>
+                            <td>0</td>
+                            <td>{{ result.paymentDistribution[0].amount }}</td>
+                            <td>{{ isExtra(result.paymentDistribution[0].extra) }}</td>
+                        </tr>
+
+                    </ng-container>
+
+                    <tr  *ngFor="let advance of result.paymentDistribution">
+                      <td>{{ advance.SeasonID }}</td>
+                      <td>{{ advance.amount }}</td>
+                      <td>{{ isExtra(advance.extra) }}</td>
+                    </tr>
+                  -->
+                </tbody>
+              </table>
+
+              <table
+                class="table"
+                *ngIf="
+                  !result.distributed && showDetail == 'SeasonalPaymentEffect'
+                "
+              >
+                <thead>
+                  <tr>
+                    <th>Previously Repaid Amount</th>
+                    <th>Current Repaid Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{{ result.previous }}</td>
+                    <td>{{ result.current }}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <table
+                class="table"
+                *ngIf="
+                  result.distributed && showDetail == 'SeasonlessPaymentEffect'
+                "
+              >
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Season ID</th>
+                    <th>Previously Repaid Amount</th>
+                    <th>Distributed Amount</th>
+                    <th>Current Amount</th>
+                    <th>Is Extra?</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let affectedSeason of result.distributedSeasons;
+                      let y = index
+                    "
+                  >
+                    <td>{{ y + 1 }}</td>
+                    <td>{{ affectedSeason.season_id }}</td>
+                    <td>{{ affectedSeason.previous }}</td>
+                    <td>{{ affectedSeason.addedAmount }}</td>
+                    <td>
+                      {{ affectedSeason.previous + affectedSeason.addedAmount }}
+                    </td>
+                    <td>{{ isExtra(affectedSeason.extra) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

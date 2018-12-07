@@ -2,12 +2,13 @@ import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ApiService } from "./services/api.service";
 import { HttpErrorResponse } from "@angular/common/http";
+
 @Component({
-  selector: "app-root",
-  templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.css"]
+  selector: "app-home",
+  templateUrl: "./home.component.html",
+  styleUrls: ["./home.component.css"]
 })
-export class AppComponent implements OnInit {
+export class HomeComponent implements OnInit {
   postform: FormGroup; // to hold our form object
   processDone = false;
   processedData; // to hold processed or original data
@@ -65,7 +66,7 @@ export class AppComponent implements OnInit {
       this.processedData = this.originalData.filter(data => {
         return data.distributed === false;
       });
-    } else if (filter_by === "passed") {
+    } else if (filter_by === "seasonless") {
       this.processedData = this.originalData.filter(data => {
         return data.distributed === true;
       });
@@ -108,6 +109,9 @@ export class AppComponent implements OnInit {
     */
     this.processDone = false;
     this.showDetail = "";
+    this.processedData = null;
+    this.originalData = null;
+    this.activeChildId= -1;
     this.api.postPayment(post).subscribe(
       data => {
         console.log(data["detail"]);
